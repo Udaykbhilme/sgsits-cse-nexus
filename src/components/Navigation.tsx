@@ -74,10 +74,10 @@ const Navigation = () => {
               <HelpCircle className="w-5 h-5" />
             </Button>
 
-            <Avatar className="w-8 h-8">
+            <Avatar className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-primary transition-all duration-200">
               <AvatarImage src="/placeholder.svg" />
               <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                U
+                <Link to="/profile">U</Link>
               </AvatarFallback>
             </Avatar>
 
