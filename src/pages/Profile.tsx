@@ -1,10 +1,12 @@
-import Navigation from "@/components/Navigation";
+import { useEffect, useState, useRef } from "react";
+import { Navigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -22,50 +24,154 @@ import {
   Github,
   Globe,
   Award,
-  Building
+  Building,
+  Upload
 } from "lucide-react";
-import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfile, Profile as ProfileType } from "@/hooks/useProfile";
+import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
+  const { user, loading: authLoading } = useAuth();
+  const { profile, loading: profileLoading, updateProfile, uploadAvatar } = useProfile();
+  const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+91 9876543210",
-    batch: "2015",
-    currentRole: "Senior Software Engineer",
-    company: "Tech Innovations Inc",
-    location: "Bangalore, India",
-    bio: "Passionate software engineer with 8+ years of experience in full-stack development. Love building scalable applications and mentoring junior developers.",
-    skills: ["React", "Node.js", "Python", "AWS", "MongoDB"],
-    linkedin: "linkedin.com/in/johndoe",
-    github: "github.com/johndoe",
-    website: "johndoe.dev",
-    achievements: [
-      "Led a team of 5 developers in building a microservices architecture",
-      "Reduced system latency by 40% through optimization",
-      "Mentored 15+ junior developers"
-    ]
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [formData, setFormData] = useState({
+    full_name: '',
+    email: '',
+    phone: '',
+    graduation_year: new Date().getFullYear(),
+    current_position: '',
+    current_company: '',
+    location: '',
+    bio: '',
+    skills: [] as string[],
+    linkedin_url: '',
+    github_url: '',
+    portfolio_url: '',
+    is_mentor: false,
+    is_looking_for_mentor: false,
+    years_of_experience: 0
   });
 
-  const handleSave = () => {
-    setIsEditing(false);
-    // Here you would save the data to backend
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        full_name: profile.full_name || '',
+        email: profile.email || '',
+        phone: profile.phone || '',
+        graduation_year: profile.graduation_year || new Date().getFullYear(),
+        current_position: profile.current_position || '',
+        current_company: profile.current_company || '',
+        location: profile.location || '',
+        bio: profile.bio || '',
+        skills: profile.skills || [],
+        linkedin_url: profile.linkedin_url || '',
+        github_url: profile.github_url || '',
+        portfolio_url: profile.portfolio_url || '',
+        is_mentor: profile.is_mentor || false,
+        is_looking_for_mentor: profile.is_looking_for_mentor || false,
+        years_of_experience: profile.years_of_experience || 0
+      });
+    }
+  }, [profile]);
+
+  if (authLoading || profileLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth?redirectTo=/profile" replace />;
+  }
+
+  const handleSave = async () => {
+    try {
+      await updateProfile(formData);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+    }
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    // Reset form data if needed
+    // Reset form data
+    if (profile) {
+      setFormData({
+        full_name: profile.full_name || '',
+        email: profile.email || '',
+        phone: profile.phone || '',
+        graduation_year: profile.graduation_year || new Date().getFullYear(),
+        current_position: profile.current_position || '',
+        current_company: profile.current_company || '',
+        location: profile.location || '',
+        bio: profile.bio || '',
+        skills: profile.skills || [],
+        linkedin_url: profile.linkedin_url || '',
+        github_url: profile.github_url || '',
+        portfolio_url: profile.portfolio_url || '',
+        is_mentor: profile.is_mentor || false,
+        is_looking_for_mentor: profile.is_looking_for_mentor || false,
+        years_of_experience: profile.years_of_experience || 0
+      });
+    }
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    setProfileData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an image file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please select an image smaller than 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      await uploadAvatar(file);
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      <main className="pt-20 pb-16">
+    <div className="min-h-screen bg-background pt-20">
+      <main className="pb-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
@@ -102,56 +208,83 @@ const Profile = () => {
                   {/* Profile Picture */}
                   <div className="relative inline-block mb-6">
                     <Avatar className="w-32 h-32">
-                      <AvatarImage src="/placeholder.svg" />
+                      <AvatarImage src={profile?.avatar_url || undefined} />
                       <AvatarFallback className="bg-primary text-primary-foreground text-3xl">
-                        {profileData.name.split(' ').map(n => n[0]).join('')}
+                        {getInitials(formData.full_name || 'User')}
                       </AvatarFallback>
                     </Avatar>
-                    {isEditing && (
-                      <Button 
-                        size="sm" 
-                        variant="hero" 
-                        className="absolute bottom-0 right-0 w-10 h-10 rounded-full p-0"
-                      >
+                    <Button 
+                      size="sm" 
+                      variant="hero" 
+                      className="absolute bottom-0 right-0 w-10 h-10 rounded-full p-0"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                    >
+                      {uploading ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      ) : (
                         <Camera className="w-4 h-4" />
-                      </Button>
-                    )}
+                      )}
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
                   </div>
 
                   {/* Basic Info */}
                   <div className="space-y-4">
                     {isEditing ? (
                       <Input
-                        value={profileData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        value={formData.full_name}
+                        onChange={(e) => handleInputChange('full_name', e.target.value)}
                         className="text-center text-xl font-bold"
+                        placeholder="Your full name"
                       />
                     ) : (
-                      <h2 className="text-2xl font-bold text-foreground">{profileData.name}</h2>
+                      <h2 className="text-2xl font-bold text-foreground">{formData.full_name || 'User'}</h2>
                     )}
 
                     <div className="space-y-2">
-                      <Badge variant="secondary" className="text-sm">
-                        Class of {profileData.batch}
-                      </Badge>
+                      {isEditing ? (
+                        <Select value={formData.graduation_year.toString()} onValueChange={(value) => handleInputChange('graduation_year', parseInt(value))}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 30 }, (_, i) => 2024 - i).map(year => (
+                              <SelectItem key={year} value={year.toString()}>
+                                Class of {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Badge variant="secondary" className="text-sm">
+                          Class of {formData.graduation_year}
+                        </Badge>
+                      )}
                       
                       {isEditing ? (
                         <div className="space-y-2">
                           <Input
-                            value={profileData.currentRole}
-                            onChange={(e) => handleInputChange('currentRole', e.target.value)}
+                            value={formData.current_position}
+                            onChange={(e) => handleInputChange('current_position', e.target.value)}
                             placeholder="Current Role"
                           />
                           <Input
-                            value={profileData.company}
-                            onChange={(e) => handleInputChange('company', e.target.value)}
+                            value={formData.current_company}
+                            onChange={(e) => handleInputChange('current_company', e.target.value)}
                             placeholder="Company"
                           />
                         </div>
                       ) : (
                         <>
-                          <p className="text-lg font-medium text-primary">{profileData.currentRole}</p>
-                          <p className="text-muted-foreground">{profileData.company}</p>
+                          <p className="text-lg font-medium text-primary">{formData.current_position || 'Not specified'}</p>
+                          <p className="text-muted-foreground">{formData.current_company || 'Not specified'}</p>
                         </>
                       )}
                     </div>
@@ -162,12 +295,14 @@ const Profile = () => {
                         <Mail className="w-4 h-4 text-muted-foreground" />
                         {isEditing ? (
                           <Input
-                            value={profileData.email}
+                            value={formData.email}
                             onChange={(e) => handleInputChange('email', e.target.value)}
                             className="flex-1"
+                            type="email"
+                            placeholder="your@email.com"
                           />
                         ) : (
-                          <span className="text-sm text-muted-foreground">{profileData.email}</span>
+                          <span className="text-sm text-muted-foreground">{formData.email || 'Not provided'}</span>
                         )}
                       </div>
                       
@@ -175,12 +310,13 @@ const Profile = () => {
                         <Phone className="w-4 h-4 text-muted-foreground" />
                         {isEditing ? (
                           <Input
-                            value={profileData.phone}
+                            value={formData.phone}
                             onChange={(e) => handleInputChange('phone', e.target.value)}
                             className="flex-1"
+                            placeholder="+91 9876543210"
                           />
                         ) : (
-                          <span className="text-sm text-muted-foreground">{profileData.phone}</span>
+                          <span className="text-sm text-muted-foreground">{formData.phone || 'Not provided'}</span>
                         )}
                       </div>
                       
@@ -188,12 +324,13 @@ const Profile = () => {
                         <MapPin className="w-4 h-4 text-muted-foreground" />
                         {isEditing ? (
                           <Input
-                            value={profileData.location}
+                            value={formData.location}
                             onChange={(e) => handleInputChange('location', e.target.value)}
                             className="flex-1"
+                            placeholder="City, Country"
                           />
                         ) : (
-                          <span className="text-sm text-muted-foreground">{profileData.location}</span>
+                          <span className="text-sm text-muted-foreground">{formData.location || 'Not provided'}</span>
                         )}
                       </div>
                     </div>
@@ -204,16 +341,20 @@ const Profile = () => {
                         <Linkedin className="w-4 h-4 text-blue-600" />
                         {isEditing ? (
                           <Input
-                            value={profileData.linkedin}
-                            onChange={(e) => handleInputChange('linkedin', e.target.value)}
+                            value={formData.linkedin_url}
+                            onChange={(e) => handleInputChange('linkedin_url', e.target.value)}
                             className="flex-1"
                             placeholder="LinkedIn URL"
                           />
                         ) : (
-                          <a href={`https://${profileData.linkedin}`} target="_blank" rel="noopener noreferrer" 
-                             className="text-sm text-blue-600 hover:underline">
-                            {profileData.linkedin}
-                          </a>
+                          formData.linkedin_url ? (
+                            <a href={formData.linkedin_url} target="_blank" rel="noopener noreferrer" 
+                               className="text-sm text-blue-600 hover:underline">
+                              LinkedIn Profile
+                            </a>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">Not provided</span>
+                          )
                         )}
                       </div>
                       
@@ -221,16 +362,20 @@ const Profile = () => {
                         <Github className="w-4 h-4 text-gray-800" />
                         {isEditing ? (
                           <Input
-                            value={profileData.github}
-                            onChange={(e) => handleInputChange('github', e.target.value)}
+                            value={formData.github_url}
+                            onChange={(e) => handleInputChange('github_url', e.target.value)}
                             className="flex-1"
                             placeholder="GitHub URL"
                           />
                         ) : (
-                          <a href={`https://${profileData.github}`} target="_blank" rel="noopener noreferrer"
-                             className="text-sm text-muted-foreground hover:underline">
-                            {profileData.github}
-                          </a>
+                          formData.github_url ? (
+                            <a href={formData.github_url} target="_blank" rel="noopener noreferrer"
+                               className="text-sm text-muted-foreground hover:underline">
+                              GitHub Profile
+                            </a>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">Not provided</span>
+                          )
                         )}
                       </div>
                       
@@ -238,16 +383,20 @@ const Profile = () => {
                         <Globe className="w-4 h-4 text-green-600" />
                         {isEditing ? (
                           <Input
-                            value={profileData.website}
-                            onChange={(e) => handleInputChange('website', e.target.value)}
+                            value={formData.portfolio_url}
+                            onChange={(e) => handleInputChange('portfolio_url', e.target.value)}
                             className="flex-1"
-                            placeholder="Website URL"
+                            placeholder="Portfolio/Website URL"
                           />
                         ) : (
-                          <a href={`https://${profileData.website}`} target="_blank" rel="noopener noreferrer"
-                             className="text-sm text-green-600 hover:underline">
-                            {profileData.website}
-                          </a>
+                          formData.portfolio_url ? (
+                            <a href={formData.portfolio_url} target="_blank" rel="noopener noreferrer"
+                               className="text-sm text-green-600 hover:underline">
+                              Portfolio
+                            </a>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">Not provided</span>
+                          )
                         )}
                       </div>
                     </div>
@@ -269,13 +418,15 @@ const Profile = () => {
                 <CardContent>
                   {isEditing ? (
                     <Textarea
-                      value={profileData.bio}
+                      value={formData.bio}
                       onChange={(e) => handleInputChange('bio', e.target.value)}
                       rows={4}
-                      placeholder="Tell us about yourself..."
+                      placeholder="Tell us about yourself, your experience, and what you're passionate about..."
                     />
                   ) : (
-                    <p className="text-muted-foreground leading-relaxed">{profileData.bio}</p>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {formData.bio || 'No bio provided yet. Click Edit Profile to add your story!'}
+                    </p>
                   )}
                 </CardContent>
               </Card>
@@ -295,18 +446,22 @@ const Profile = () => {
                         Skills (comma-separated)
                       </Label>
                       <Input
-                        value={profileData.skills.join(', ')}
-                        onChange={(e) => handleInputChange('skills', e.target.value)}
-                        placeholder="React, Node.js, Python..."
+                        value={formData.skills.join(', ')}
+                        onChange={(e) => handleInputChange('skills', e.target.value.split(',').map(s => s.trim()).filter(s => s))}
+                        placeholder="React, Node.js, Python, Machine Learning..."
                       />
                     </div>
                   ) : (
                     <div className="flex flex-wrap gap-2">
-                      {profileData.skills.map((skill, index) => (
-                        <Badge key={index} variant="secondary">
-                          {skill}
-                        </Badge>
-                      ))}
+                      {formData.skills.length > 0 ? (
+                        formData.skills.map((skill, index) => (
+                          <Badge key={index} variant="secondary">
+                            {skill}
+                          </Badge>
+                        ))
+                      ) : (
+                        <p className="text-muted-foreground">No skills added yet.</p>
+                      )}
                     </div>
                   )}
                 </CardContent>
@@ -323,74 +478,57 @@ const Profile = () => {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-sm font-medium mb-2 block">Batch Year</Label>
+                      <Label className="text-sm font-medium mb-2 block">Years of Experience</Label>
                       {isEditing ? (
-                        <Select value={profileData.batch} onValueChange={(value) => handleInputChange('batch', value)}>
+                        <Select value={formData.years_of_experience.toString()} onValueChange={(value) => handleInputChange('years_of_experience', parseInt(value))}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {Array.from({ length: 30 }, (_, i) => 2024 - i).map(year => (
-                              <SelectItem key={year} value={year.toString()}>
-                                {year}
+                            {Array.from({ length: 21 }, (_, i) => i).map(years => (
+                              <SelectItem key={years} value={years.toString()}>
+                                {years === 0 ? 'Fresher' : `${years} year${years > 1 ? 's' : ''}`}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       ) : (
-                        <p className="text-muted-foreground">{profileData.batch}</p>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">Industry</Label>
-                      {isEditing ? (
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select industry" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="technology">Technology</SelectItem>
-                            <SelectItem value="finance">Finance</SelectItem>
-                            <SelectItem value="healthcare">Healthcare</SelectItem>
-                            <SelectItem value="education">Education</SelectItem>
-                            <SelectItem value="consulting">Consulting</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <p className="text-muted-foreground">Technology</p>
+                        <p className="text-muted-foreground">
+                          {formData.years_of_experience === 0 ? 'Fresher' : `${formData.years_of_experience} year${formData.years_of_experience > 1 ? 's' : ''}`}
+                        </p>
                       )}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
 
-              {/* Achievements */}
-              <Card className="card-gradient">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Award className="w-5 h-5" />
-                    Key Achievements
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {isEditing ? (
-                    <Textarea
-                      value={profileData.achievements.join('\n')}
-                      onChange={(e) => handleInputChange('achievements', e.target.value)}
-                      rows={4}
-                      placeholder="List your key achievements (one per line)..."
-                    />
-                  ) : (
-                    <ul className="space-y-2">
-                      {profileData.achievements.map((achievement, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                          <span className="text-muted-foreground">{achievement}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  {/* Mentorship Preferences */}
+                  <div className="space-y-4 pt-4 border-t">
+                    <h4 className="font-medium">Mentorship Preferences</h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="text-sm font-medium">Available as Mentor</Label>
+                          <p className="text-xs text-muted-foreground">Help guide junior alumni</p>
+                        </div>
+                        <Switch
+                          checked={formData.is_mentor}
+                          onCheckedChange={(checked) => handleInputChange('is_mentor', checked)}
+                          disabled={!isEditing}
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="text-sm font-medium">Looking for Mentor</Label>
+                          <p className="text-xs text-muted-foreground">Seeking guidance from experienced alumni</p>
+                        </div>
+                        <Switch
+                          checked={formData.is_looking_for_mentor}
+                          onCheckedChange={(checked) => handleInputChange('is_looking_for_mentor', checked)}
+                          disabled={!isEditing}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>
