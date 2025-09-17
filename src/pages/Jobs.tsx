@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import JobPostDialog from "@/components/JobPostDialog";
+import JobDetailsDialog from "@/components/JobDetailsDialog";
+import { useJobs } from "@/hooks/useJobs";
 import { 
   Briefcase, 
   MapPin, 
@@ -21,6 +24,7 @@ import {
 } from "lucide-react";
 
 const Jobs = () => {
+  const { jobs } = useJobs();
   const jobCategories = [
     { name: "Software Engineering", count: 45, color: "from-blue-500 to-cyan-500" },
     { name: "Data Science", count: 32, color: "from-green-500 to-emerald-500" },
@@ -109,10 +113,12 @@ const Jobs = () => {
                   <Filter className="w-4 h-4 mr-2" />
                   Filters
                 </Button>
-                <Button variant="hero" size="lg">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Post Job
-                </Button>
+                <JobPostDialog>
+                  <Button variant="hero" size="lg">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Post Job
+                  </Button>
+                </JobPostDialog>
               </div>
 
               {/* Quick Filters */}
@@ -173,7 +179,7 @@ const Jobs = () => {
               Featured Opportunities
             </h2>
             <div className="space-y-6">
-              {featuredJobs.map((job, index) => (
+              {jobs.map((job, index) => (
                 <Card key={index} className="card-gradient hover:shadow-xl transition-all duration-300">
                   <CardContent className="p-6">
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
@@ -184,18 +190,12 @@ const Jobs = () => {
                               <h3 className="text-xl font-semibold text-foreground">
                                 {job.title}
                               </h3>
-                              {job.verified && (
-                                <Badge variant="default" className="text-xs">
-                                  <Star className="w-3 h-3 mr-1" />
-                                  Verified
-                                </Badge>
-                              )}
                             </div>
                             <p className="text-primary font-medium text-lg">{job.company}</p>
-                            <p className="text-sm text-muted-foreground">Posted by {job.postedBy}</p>
+                            <p className="text-sm text-muted-foreground">Posted by Alumni</p>
                           </div>
                           <Badge variant="outline" className="text-xs">
-                            {job.type}
+                            {job.job_type}
                           </Badge>
                         </div>
 
@@ -206,29 +206,29 @@ const Jobs = () => {
                           </div>
                           <div className="flex items-center">
                             <Clock className="w-4 h-4 mr-2" />
-                            {job.experience}
+                            {job.experience_level}
                           </div>
-                          <div className="flex items-center">
-                            <DollarSign className="w-4 h-4 mr-2" />
-                            {job.salary}
-                          </div>
-                          <div className="flex items-center">
-                            <Users className="w-4 h-4 mr-2" />
-                            {job.applicants} applied
-                          </div>
+                          {job.salary_range && (
+                            <div className="flex items-center">
+                              <DollarSign className="w-4 h-4 mr-2" />
+                              {job.salary_range}
+                            </div>
+                          )}
                         </div>
 
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {job.tags.map((tag, tagIndex) => (
-                            <Badge key={tagIndex} variant="secondary" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
+                        {job.skills_required && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {job.skills_required.map((skill, tagIndex) => (
+                              <Badge key={tagIndex} variant="secondary" className="text-xs">
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
 
                         <div className="flex items-center text-sm text-muted-foreground">
                           <Calendar className="w-4 h-4 mr-2" />
-                          Apply by: {job.deadline}
+                          Posted: {new Date(job.created_at).toLocaleDateString()}
                         </div>
                       </div>
 
@@ -236,10 +236,12 @@ const Jobs = () => {
                         <Button variant="hero" className="lg:w-32">
                           Apply Now
                         </Button>
-                        <Button variant="outline" size="sm" className="lg:w-32">
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Details
-                        </Button>
+                        <JobDetailsDialog job={job}>
+                          <Button variant="outline" size="sm" className="lg:w-32">
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Details
+                          </Button>
+                        </JobDetailsDialog>
                       </div>
                     </div>
                   </CardContent>
@@ -267,9 +269,11 @@ const Jobs = () => {
                 Connect with talented SGSITS graduates and help them advance their careers. 
                 Alumni job postings get priority visibility and verification.
               </p>
-              <Button variant="hero" size="lg">
-                Post a Job Opening
-              </Button>
+              <JobPostDialog>
+                <Button variant="hero" size="lg">
+                  Post a Job Opening
+                </Button>
+              </JobPostDialog>
             </Card>
           </div>
         </section>

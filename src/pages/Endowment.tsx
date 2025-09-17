@@ -117,71 +117,6 @@ const Endowment = () => {
           </div>
         </section>
 
-        {/* Active Campaigns */}
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center text-foreground mb-12">
-              Active Campaigns
-            </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {donationGoals.map((campaign, index) => (
-                <Card key={index} className="card-gradient hover:shadow-xl transition-all duration-300">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <Badge 
-                        variant={campaign.urgency === 'high' ? 'destructive' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {campaign.urgency === 'high' ? 'Urgent' : 'Active'}
-                      </Badge>
-                      <Badge variant="outline" className="text-xs">
-                        {campaign.category}
-                      </Badge>
-                    </div>
-
-                    <h3 className="text-xl font-semibold text-foreground mb-3">
-                      {campaign.title}
-                    </h3>
-                    
-                    <p className="text-muted-foreground mb-6 text-sm">
-                      {campaign.description}
-                    </p>
-
-                    {/* Progress */}
-                    <div className="mb-6">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-medium text-foreground">
-                          {formatCurrency(campaign.raised)}
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          of {formatCurrency(campaign.goal)}
-                        </span>
-                      </div>
-                      <Progress 
-                        value={getProgressPercentage(campaign.raised, campaign.goal)} 
-                        className="h-2"
-                      />
-                      <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
-                        <span>{Math.round(getProgressPercentage(campaign.raised, campaign.goal))}% funded</span>
-                        <span>{campaign.donors} donors</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <Button variant="hero" className="w-full">
-                        <Heart className="w-4 h-4 mr-2" />
-                        Donate Now
-                      </Button>
-                      <Button variant="outline" size="sm" className="w-full">
-                        Learn More
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* Quick Donate */}
         <section className="py-16 bg-muted/30">
@@ -236,7 +171,12 @@ const Endowment = () => {
                   </label>
                 </div>
 
-                <Button variant="hero" size="lg" className="w-full">
+                <Button 
+                  variant="hero" 
+                  size="lg" 
+                  className="w-full"
+                  onClick={() => window.open('https://razorpay.me/@sgsitsalumni', '_blank')}
+                >
                   <Gift className="w-4 h-4 mr-2" />
                   Donate Now
                 </Button>

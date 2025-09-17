@@ -2,9 +2,26 @@ import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { useAlumni } from "@/hooks/useAlumni";
+import { useAuth } from "@/hooks/useAuth";
+import AlumniGrid from "@/components/AlumniGrid";
 import { Search, Filter, MapPin, Briefcase } from "lucide-react";
+import { useState } from "react";
 
 const Alumni = () => {
+  const { user } = useAuth();
+  const { alumni, searchAlumni, filterByCategory, searchQuery } = useAlumni();
+  const [searchInput, setSearchInput] = useState('');
+
+  const handleSearch = (query: string) => {
+    setSearchInput(query);
+    searchAlumni(query);
+  };
+
+  const handleFilter = (category: string) => {
+    filterByCategory(category);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -32,6 +49,8 @@ const Alumni = () => {
                   <Input
                     placeholder="Search by name, company, or expertise..."
                     className="pl-10 h-12 text-base"
+                    value={searchInput}
+                    onChange={(e) => handleSearch(e.target.value)}
                   />
                 </div>
                 <Button variant="outline" size="lg" className="md:w-auto w-full">
@@ -42,21 +61,41 @@ const Alumni = () => {
 
               {/* Quick Filters */}
               <div className="flex flex-wrap gap-2 mb-8">
-                <Badge variant="secondary" className="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+                <Badge 
+                  variant="secondary" 
+                  className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+                  onClick={() => handleFilter('all')}
+                >
                   All Alumni
                 </Badge>
-                <Badge variant="outline" className="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+                <Badge 
+                  variant="outline" 
+                  className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+                  onClick={() => handleFilter('tech')}
+                >
                   <Briefcase className="w-3 h-3 mr-1" />
                   Tech Industry
                 </Badge>
-                <Badge variant="outline" className="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+                <Badge 
+                  variant="outline" 
+                  className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+                  onClick={() => handleFilter('bangalore')}
+                >
                   <MapPin className="w-3 h-3 mr-1" />
                   Bangalore
                 </Badge>
-                <Badge variant="outline" className="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+                <Badge 
+                  variant="outline" 
+                  className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+                  onClick={() => handleFilter('entrepreneurs')}
+                >
                   Entrepreneurs
                 </Badge>
-                <Badge variant="outline" className="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+                <Badge 
+                  variant="outline" 
+                  className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+                  onClick={() => handleFilter('ai-ml')}
+                >
                   AI/ML Experts
                 </Badge>
               </div>
@@ -67,22 +106,38 @@ const Alumni = () => {
         {/* Results Section */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h2 className="text-2xl font-semibold text-foreground mb-4">
-                Please register or login to access the alumni directory
-              </h2>
-              <p className="text-muted-foreground mb-8">
-                Connect with our amazing community of 2,500+ alumni worldwide
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" variant="hero">
-                  Register Now
-                </Button>
-                <Button size="lg" variant="outline">
-                  Login
-                </Button>
+            {user ? (
+              <div>
+                <div className="flex justify-between items-center mb-8">
+                  <h2 className="text-2xl font-semibold text-foreground">
+                    Alumni Directory ({alumni.length} alumni)
+                  </h2>
+                  {searchQuery && (
+                    <p className="text-muted-foreground">
+                      Search results for "{searchQuery}"
+                    </p>
+                  )}
+                </div>
+                <AlumniGrid alumni={alumni} />
               </div>
-            </div>
+            ) : (
+              <div className="text-center">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">
+                  Please register or login to access the alumni directory
+                </h2>
+                <p className="text-muted-foreground mb-8">
+                  Connect with our amazing community of 2,500+ alumni worldwide
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button size="lg" variant="hero" onClick={() => window.location.href = '/auth'}>
+                    Register Now
+                  </Button>
+                  <Button size="lg" variant="outline" onClick={() => window.location.href = '/auth'}>
+                    Login
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </section>
       </main>

@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import MentorshipRequestDialog from "@/components/MentorshipRequestDialog";
+import { useAuth } from "@/hooks/useAuth";
 import { 
   Users, 
   Clock, 
@@ -20,6 +22,7 @@ import {
 } from "lucide-react";
 
 const Mentorship = () => {
+  const { user } = useAuth();
   const mentorshipCategories = [
     { name: "Career Guidance", count: 45, icon: Briefcase },
     { name: "Technical Skills", count: 32, icon: GraduationCap },
@@ -130,9 +133,11 @@ const Mentorship = () => {
                   />
                 </div>
 
-                <Button className="w-full" variant="hero" size="lg">
-                  Submit Mentorship Request
-                </Button>
+                <MentorshipRequestDialog>
+                  <Button className="w-full" variant="hero" size="lg">
+                    Submit Mentorship Request
+                  </Button>
+                </MentorshipRequestDialog>
               </CardContent>
             </Card>
           </div>
@@ -208,7 +213,17 @@ const Mentorship = () => {
                       </div>
                     </div>
                     
-                    <Button className="w-full" variant="outline">
+                    <Button 
+                      className="w-full" 
+                      variant="outline"
+                      onClick={() => {
+                        if (user) {
+                          alert(`Joining session: ${session.title}`);
+                        } else {
+                          window.location.href = '/auth';
+                        }
+                      }}
+                    >
                       Join Session
                     </Button>
                   </CardContent>
