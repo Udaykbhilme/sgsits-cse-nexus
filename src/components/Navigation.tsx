@@ -57,7 +57,6 @@ const Navigation = () => {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold text-yellow-300">Alumni+</h1>
-              <p className="text-xs text-yellow-200/70">SGSITS Computer Engineering</p>
             </div>
           </Link>
 
