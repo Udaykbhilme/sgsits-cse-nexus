@@ -22,6 +22,8 @@ export interface Profile {
   is_mentor: boolean;
   is_looking_for_mentor: boolean;
   years_of_experience: number;
+  is_verified: boolean | null;
+  verification_status: string | null;
   created_at: string;
   updated_at: string;
 }

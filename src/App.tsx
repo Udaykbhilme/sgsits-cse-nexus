@@ -14,6 +14,7 @@ import About from "./pages/About";
 import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
 import Verification from "./pages/Verification";
+import AdminVerification from "./pages/AdminVerification";
 import Messaging from "./pages/Messaging";
 import NotFound from "./pages/NotFound";
 
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/verification" element={<Verification />} />
+              <Route path="/admin/verification" element={<AdminVerification />} />
               <Route path="/auth" element={<Auth />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

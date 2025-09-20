@@ -25,15 +25,20 @@ import {
   Globe,
   Award,
   Building,
-  Upload
+  Upload,
+  Shield,
+  Crown
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile, Profile as ProfileType } from "@/hooks/useProfile";
+import { useUserRole } from "@/hooks/useUserRole";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const { user, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading, updateProfile, uploadAvatar } = useProfile();
+  const { isAdmin } = useUserRole();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -245,7 +250,16 @@ const Profile = () => {
                         placeholder="Your full name"
                       />
                     ) : (
-                      <h2 className="text-2xl font-bold text-foreground">{formData.full_name || 'User'}</h2>
+                      <div className="text-center">
+                        <h2 className="text-2xl font-bold text-foreground">{formData.full_name || 'User'}</h2>
+                        {isAdmin && (
+                          <div className="flex items-center justify-center gap-2 mt-2">
+                            <Crown className="w-5 h-5 text-yellow-500" />
+                            <span className="text-lg font-bold text-yellow-500">The God</span>
+                            <Crown className="w-5 h-5 text-yellow-500" />
+                          </div>
+                        )}
+                      </div>
                     )}
 
                     <div className="space-y-2">
@@ -531,6 +545,46 @@ const Profile = () => {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Verification Section */}
+              {!isAdmin && (
+                <Card className="card-gradient">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Shield className="w-5 h-5" />
+                      Account Verification
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {profile?.is_verified ? (
+                      <div className="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                          <Shield className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-green-700">Verified Account</h4>
+                          <p className="text-sm text-green-600">Your account has been verified by admin</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                          <h4 className="font-semibold text-yellow-700 mb-2">Account Not Verified</h4>
+                          <p className="text-sm text-yellow-600 mb-3">
+                            Get verified to unlock full access to the alumni network including messaging, mentorship, and job postings.
+                          </p>
+                        </div>
+                        <Button asChild className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold">
+                          <Link to="/verification">
+                            <Shield className="w-4 h-4 mr-2" />
+                            Get Verified
+                          </Link>
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </div>
         </div>

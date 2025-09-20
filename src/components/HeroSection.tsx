@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Users, Briefcase, Heart, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-bg.jpg";
 
 const HeroSection = () => {
@@ -55,12 +56,16 @@ const HeroSection = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up">
-          <Button size="lg" className="text-lg px-8 py-4 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold border-2 border-yellow-400 shadow-lg hover:shadow-xl transition-all duration-300">
-            Join the Network
-            <ArrowRight className="ml-2 w-5 h-5" />
+          <Button size="lg" asChild className="text-lg px-8 py-4 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold border-2 border-yellow-400 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Link to="/auth">
+              Join the Network
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Link>
           </Button>
-          <Button size="lg" className="text-lg px-8 py-4 bg-black/30 hover:bg-black/50 text-yellow-300 border-2 border-yellow-500/50 font-bold shadow-lg hover:shadow-xl transition-all duration-300">
-            Explore Alumni Directory
+          <Button size="lg" asChild className="text-lg px-8 py-4 bg-black/30 hover:bg-black/50 text-yellow-300 border-2 border-yellow-500/50 font-bold shadow-lg hover:shadow-xl transition-all duration-300">
+            <Link to="/alumni">
+              Explore Alumni Directory
+            </Link>
           </Button>
         </div>
 

@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
+import { useUserRole } from "@/hooks/useUserRole";
+import AdminNavigation from "./AdminNavigation";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,6 +35,12 @@ const Navigation = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { profile } = useProfile();
+  const { isAdmin } = useUserRole();
+
+  // If user is admin, show admin navigation
+  if (isAdmin) {
+    return <AdminNavigation />;
+  }
 
   const navItems = [
     { name: "Home", href: "/", icon: Home },

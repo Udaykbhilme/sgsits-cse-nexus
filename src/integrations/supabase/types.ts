@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          date: string | null
+          id: string
+          is_active: boolean | null
+          link: string | null
+          priority: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          date?: string | null
+          id?: string
+          is_active?: boolean | null
+          link?: string | null
+          priority?: string
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          date?: string | null
+          id?: string
+          is_active?: boolean | null
+          link?: string | null
+          priority?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       endowment_contributions: {
         Row: {
           amount: number
@@ -185,6 +227,7 @@ export type Database = {
           id: string
           is_looking_for_mentor: boolean | null
           is_mentor: boolean | null
+          is_verified: boolean | null
           linkedin_url: string | null
           location: string | null
           phone: string | null
@@ -192,6 +235,7 @@ export type Database = {
           skills: string[] | null
           updated_at: string
           user_id: string
+          verification_status: string | null
           years_of_experience: number | null
         }
         Insert: {
@@ -207,6 +251,7 @@ export type Database = {
           id?: string
           is_looking_for_mentor?: boolean | null
           is_mentor?: boolean | null
+          is_verified?: boolean | null
           linkedin_url?: string | null
           location?: string | null
           phone?: string | null
@@ -214,6 +259,7 @@ export type Database = {
           skills?: string[] | null
           updated_at?: string
           user_id: string
+          verification_status?: string | null
           years_of_experience?: number | null
         }
         Update: {
@@ -229,6 +275,7 @@ export type Database = {
           id?: string
           is_looking_for_mentor?: boolean | null
           is_mentor?: boolean | null
+          is_verified?: boolean | null
           linkedin_url?: string | null
           location?: string | null
           phone?: string | null
@@ -236,6 +283,7 @@ export type Database = {
           skills?: string[] | null
           updated_at?: string
           user_id?: string
+          verification_status?: string | null
           years_of_experience?: number | null
         }
         Relationships: []
@@ -254,6 +302,45 @@ export type Database = {
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      verification_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          document_type: string
+          document_url: string | null
+          id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          document_type: string
+          document_url?: string | null
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          document_type?: string
+          document_url?: string | null
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
