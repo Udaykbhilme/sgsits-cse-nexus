@@ -9,7 +9,7 @@ import { Upload, FileText, Mail, CheckCircle, AlertCircle } from 'lucide-react';
 
 const Verification = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [verificationType, setVerificationType] = useState<'college_id' | 'marksheet' | 'email'>('email');
+  const [verificationType, setVerificationType] = useState<'college_id' | 'marksheet' | 'email'>('college_id');
   const [emailQuery, setEmailQuery] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
