@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Shield, Users, GraduationCap, UserCheck } from 'lucide-react';
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
@@ -19,7 +20,10 @@ export default function Auth() {
     email: '',
     password: '',
     fullName: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    role: '',
+    batchYear: '',
+    studentId: ''
   });
 
   const redirectTo = searchParams.get('redirectTo') || '/';
@@ -56,22 +60,50 @@ export default function Auth() {
     });
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (error) {
-        toast({
-          title: "Sign in failed",
-          description: error.message,
-          variant: "destructive",
+      // Check for admin login
+      if (formData.email === 'admin1952@sgsits.com' && formData.password === 'adminisgod') {
+        // Create admin session
+        const { error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
         });
+
+        if (error) {
+          toast({
+            title: "Admin sign in failed",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          // Set admin role in local storage for now
+          localStorage.setItem('userRole', 'admin');
+          localStorage.setItem('isVerified', 'true');
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (error) {
+          toast({
+            title: "Sign in failed",
+            description: error.message,
+            variant: "destructive",
+          });
+        }
       }
     } catch (error) {
       toast({
@@ -98,6 +130,16 @@ export default function Auth() {
       return;
     }
 
+    if (!formData.role) {
+      toast({
+        title: "Role required",
+        description: "Please select your role (Student, Alumni, or Faculty).",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.signUp({
         email: formData.email,
@@ -106,6 +148,10 @@ export default function Auth() {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
             full_name: formData.fullName,
+            role: formData.role,
+            batch_year: formData.batchYear,
+            student_id: formData.studentId,
+            is_verified: false
           }
         }
       });
@@ -146,9 +192,10 @@ export default function Auth() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="admin">Admin</TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin">
@@ -207,6 +254,61 @@ export default function Auth() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="signup-role">Role</Label>
+                  <Select onValueChange={(value) => handleSelectChange('role', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="student">
+                        <div className="flex items-center gap-2">
+                          <GraduationCap className="w-4 h-4" />
+                          Student
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="alumni">
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4" />
+                          Alumni
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="faculty">
+                        <div className="flex items-center gap-2">
+                          <UserCheck className="w-4 h-4" />
+                          Faculty
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {(formData.role === 'student' || formData.role === 'alumni') && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-batch">Batch Year</Label>
+                      <Input
+                        id="signup-batch"
+                        name="batchYear"
+                        type="text"
+                        placeholder="e.g., 2024, 2023"
+                        value={formData.batchYear}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-student-id">Student ID (if available)</Label>
+                      <Input
+                        id="signup-student-id"
+                        name="studentId"
+                        type="text"
+                        placeholder="Your student ID"
+                        value={formData.studentId}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </>
+                )}
+                <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <Input
                     id="signup-email"
@@ -255,6 +357,54 @@ export default function Auth() {
                   {isLoading ? "Creating account..." : "Create Account"}
                 </Button>
               </form>
+            </TabsContent>
+            
+            <TabsContent value="admin">
+              <div className="space-y-4">
+                <div className="text-center p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                  <Shield className="w-8 h-8 mx-auto mb-2 text-yellow-500" />
+                  <h3 className="font-semibold text-yellow-300">Admin Access</h3>
+                  <p className="text-sm text-yellow-200/70">Use your admin credentials to access the admin panel</p>
+                </div>
+                <form onSubmit={handleSignIn} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="admin-email">Admin Email</Label>
+                    <Input
+                      id="admin-email"
+                      name="email"
+                      type="email"
+                      placeholder="admin1952@sgsits.com"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="admin-password">Admin Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="admin-password"
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter admin password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      </button>
+                    </div>
+                  </div>
+                  <Button type="submit" className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold" disabled={isLoading}>
+                    {isLoading ? "Signing in..." : "Admin Sign In"}
+                  </Button>
+                </form>
+              </div>
             </TabsContent>
           </Tabs>
         </CardContent>

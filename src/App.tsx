@@ -13,6 +13,8 @@ import Endowment from "./pages/Endowment";
 import About from "./pages/About";
 import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
+import Verification from "./pages/Verification";
+import Messaging from "./pages/Messaging";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,9 +33,11 @@ const App = () => (
               <Route path="/alumni" element={<Alumni />} />
               <Route path="/mentorship" element={<Mentorship />} />
               <Route path="/jobs" element={<Jobs />} />
+              <Route path="/messaging" element={<Messaging />} />
               <Route path="/endowment" element={<Endowment />} />
               <Route path="/about" element={<About />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/verification" element={<Verification />} />
               <Route path="/auth" element={<Auth />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

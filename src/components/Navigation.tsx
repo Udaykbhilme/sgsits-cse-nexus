@@ -39,6 +39,7 @@ const Navigation = () => {
     { name: "Alumni", href: "/alumni", icon: Users },
     { name: "Mentorship", href: "/mentorship", icon: Handshake },
     { name: "Jobs", href: "/jobs", icon: Briefcase },
+    { name: "Messaging", href: "/messaging", icon: MessageCircle },
     { name: "Endowment", href: "/endowment", icon: Heart },
     { name: "About", href: "/about", icon: Info },
   ];
@@ -46,17 +47,17 @@ const Navigation = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 nav-transparent transition-all duration-300">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-yellow-500/20 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 hero-gradient rounded-lg flex items-center justify-center text-white font-bold text-xl">
+            <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-amber-500 rounded-lg flex items-center justify-center text-black font-bold text-xl border-2 border-yellow-400 shadow-lg">
               A+
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-foreground">Alumni+</h1>
-              <p className="text-xs text-muted-foreground">SGSITS Computer Engineering</p>
+              <h1 className="text-xl font-bold text-yellow-300">Alumni+</h1>
+              <p className="text-xs text-yellow-200/70">SGSITS Computer Engineering</p>
             </div>
           </Link>
 
@@ -68,8 +69,8 @@ const Navigation = () => {
                 to={item.href}
                 className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   isActive(item.href)
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    ? "bg-yellow-500 text-black border border-yellow-400 shadow-lg"
+                    : "text-yellow-200 hover:text-yellow-300 hover:bg-yellow-500/20 border border-transparent hover:border-yellow-500/30"
                 }`}
               >
                 <item.icon className="w-4 h-4" />
@@ -80,22 +81,22 @@ const Navigation = () => {
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative text-yellow-300 hover:text-yellow-400 hover:bg-yellow-500/20">
               <MessageCircle className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full"></span>
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full"></span>
             </Button>
             
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="text-yellow-300 hover:text-yellow-400 hover:bg-yellow-500/20">
               <HelpCircle className="w-5 h-5" />
             </Button>
 
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full p-0">
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full p-0 border-2 border-yellow-500/30 hover:border-yellow-400/50">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={profile?.avatar_url || undefined} alt="Profile" />
-                      <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                      <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-amber-500 text-black text-sm font-bold">
                         {profile?.full_name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
                       </AvatarFallback>
                     </Avatar>
@@ -123,7 +124,7 @@ const Navigation = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild variant="default" size="sm">
+              <Button asChild size="sm" className="bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold border-2 border-yellow-400 shadow-lg">
                 <Link to="/auth">Sign In</Link>
               </Button>
             )}
@@ -132,7 +133,7 @@ const Navigation = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className="lg:hidden text-yellow-300 hover:text-yellow-400 hover:bg-yellow-500/20"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -142,7 +143,7 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border/50">
+          <div className="lg:hidden py-4 border-t border-yellow-500/20 bg-black/90">
             <div className="grid grid-cols-2 gap-2">
               {navItems.map((item) => (
                 <Link
@@ -151,8 +152,8 @@ const Navigation = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive(item.href)
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      ? "bg-yellow-500 text-black border border-yellow-400 shadow-lg"
+                      : "text-yellow-200 hover:text-yellow-300 hover:bg-yellow-500/20 border border-transparent hover:border-yellow-500/30"
                   }`}
                 >
                   <item.icon className="w-4 h-4" />

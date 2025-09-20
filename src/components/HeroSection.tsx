@@ -20,26 +20,27 @@ const HeroSection = () => {
           alt="SGSITS Campus"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/70 to-primary-glow/80" />
+        <div className="absolute inset-0 bg-black/20" />
       </div>
 
       {/* Animated Background Elements */}
       <div className="absolute inset-0 z-10">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-accent/20 rounded-full blur-xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-48 h-48 bg-accent-secondary/20 rounded-full blur-2xl animate-pulse" />
-        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-white/10 rounded-full blur-lg animate-glow" />
+        <div className="absolute top-20 left-10 w-32 h-32 bg-yellow-500/20 rounded-full blur-xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-48 h-48 bg-yellow-400/20 rounded-full blur-2xl animate-pulse" />
+        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-yellow-300/10 rounded-full blur-lg animate-glow" />
+        <div className="absolute top-1/3 right-1/4 w-20 h-20 bg-amber-500/15 rounded-full blur-lg animate-pulse" />
       </div>
 
       {/* Content */}
       <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
         {/* Main Heading */}
         <div className="mb-8 animate-fade-in">
-          <Badge className="mb-4 bg-white/20 text-white border-white/30 hover:bg-white/30">
+          <Badge className="mb-4 bg-yellow-500/20 text-yellow-300 border-yellow-500/30 hover:bg-yellow-500/30">
             🎓 Official Alumni Network
           </Badge>
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
             Welcome to{" "}
-            <span className="bg-gradient-to-r from-accent to-accent-secondary bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 bg-clip-text text-transparent">
               Alumni+
             </span>
           </h1>
@@ -54,11 +55,11 @@ const HeroSection = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up">
-          <Button size="lg" variant="accent" className="text-lg px-8 py-4">
+          <Button size="lg" className="text-lg px-8 py-4 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold border-2 border-yellow-400 shadow-lg hover:shadow-xl transition-all duration-300">
             Join the Network
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
-          <Button size="lg" variant="glass" className="text-lg px-8 py-4">
+          <Button size="lg" className="text-lg px-8 py-4 bg-black/30 hover:bg-black/50 text-yellow-300 border-2 border-yellow-500/50 font-bold shadow-lg hover:shadow-xl transition-all duration-300">
             Explore Alumni Directory
           </Button>
         </div>
@@ -68,14 +69,14 @@ const HeroSection = () => {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="glass-effect p-4 sm:p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300"
+              className="bg-black/30 backdrop-blur-sm border-2 border-yellow-500/30 p-4 sm:p-6 rounded-2xl text-center hover:scale-105 transition-all duration-300 hover:border-yellow-400/50 hover:bg-black/40"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <stat.icon className="w-8 h-8 mx-auto mb-3 text-accent" />
-              <div className="text-2xl sm:text-3xl font-bold text-white mb-1">
+              <stat.icon className="w-8 h-8 mx-auto mb-3 text-yellow-400" />
+              <div className="text-2xl sm:text-3xl font-bold text-yellow-300 mb-1">
                 {stat.value}
               </div>
-              <div className="text-sm text-white/75">{stat.label}</div>
+              <div className="text-sm text-yellow-200/75">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -83,8 +84,8 @@ const HeroSection = () => {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white/50 rounded-full">
-          <div className="w-1.5 h-3 bg-white/75 rounded-full mx-auto mt-2 animate-pulse" />
+        <div className="w-6 h-10 border-2 border-yellow-500/50 rounded-full">
+          <div className="w-1.5 h-3 bg-yellow-400 rounded-full mx-auto mt-2 animate-pulse" />
         </div>
       </div>
     </section>
