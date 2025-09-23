@@ -14,7 +14,8 @@ import {
   LogOut,
   User,
   Crown,
-  DollarSign
+  DollarSign,
+  Handshake
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
@@ -28,7 +29,7 @@ const AdminNavigation = () => {
 
   const navigationItems = [
     { name: "Everyone", href: "/alumni", icon: Users },
-    { name: "Mentorship", href: "/mentorship", icon: Heart },
+    { name: "Mentorship", href: "/mentorship", icon: Handshake },
     { name: "Verification", href: "/admin/verification", icon: ShieldCheck },
     { name: "Messaging", href: "/messaging", icon: MessageSquare },
     { name: "Endowment", href: "/endowment", icon: DollarSign },

@@ -14,6 +14,62 @@ export type Database = {
   }
   public: {
     Tables: {
+      alumni: {
+        Row: {
+          achievements: string[] | null
+          course: string | null
+          created_at: string
+          current_company_name: string | null
+          current_job_role: string | null
+          final_cgpa: number | null
+          first_job_company: string | null
+          first_job_role: string | null
+          graduation_year: number | null
+          id: string
+          profile_id: string
+          student_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          achievements?: string[] | null
+          course?: string | null
+          created_at?: string
+          current_company_name?: string | null
+          current_job_role?: string | null
+          final_cgpa?: number | null
+          first_job_company?: string | null
+          first_job_role?: string | null
+          graduation_year?: number | null
+          id?: string
+          profile_id: string
+          student_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          achievements?: string[] | null
+          course?: string | null
+          created_at?: string
+          current_company_name?: string | null
+          current_job_role?: string | null
+          final_cgpa?: number | null
+          first_job_company?: string | null
+          first_job_role?: string | null
+          graduation_year?: number | null
+          id?: string
+          profile_id?: string
+          student_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alumni_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           content: string
@@ -91,6 +147,65 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      faculty: {
+        Row: {
+          created_at: string
+          department: string | null
+          designation: string | null
+          employee_id: string | null
+          experience_years: number | null
+          id: string
+          joining_date: string | null
+          office_location: string | null
+          profile_id: string
+          publications_count: number | null
+          qualification: string | null
+          research_areas: string[] | null
+          specialization: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          designation?: string | null
+          employee_id?: string | null
+          experience_years?: number | null
+          id?: string
+          joining_date?: string | null
+          office_location?: string | null
+          profile_id: string
+          publications_count?: number | null
+          qualification?: string | null
+          research_areas?: string[] | null
+          specialization?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          designation?: string | null
+          employee_id?: string | null
+          experience_years?: number | null
+          id?: string
+          joining_date?: string | null
+          office_location?: string | null
+          profile_id?: string
+          publications_count?: number | null
+          qualification?: string | null
+          research_areas?: string[] | null
+          specialization?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faculty_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -287,6 +402,128 @@ export type Database = {
           years_of_experience?: number | null
         }
         Relationships: []
+      }
+      students: {
+        Row: {
+          batch_year: number | null
+          cgpa: number | null
+          course: string | null
+          created_at: string
+          enrollment_year: number | null
+          id: string
+          is_active: boolean | null
+          profile_id: string
+          semester: number | null
+          student_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          batch_year?: number | null
+          cgpa?: number | null
+          course?: string | null
+          created_at?: string
+          enrollment_year?: number | null
+          id?: string
+          is_active?: boolean | null
+          profile_id: string
+          semester?: number | null
+          student_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          batch_year?: number | null
+          cgpa?: number | null
+          course?: string | null
+          created_at?: string
+          enrollment_year?: number | null
+          id?: string
+          is_active?: boolean | null
+          profile_id?: string
+          semester?: number | null
+          student_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_requests: {
+        Row: {
+          approved_amount: number | null
+          created_at: string
+          description: string
+          financial_situation: string | null
+          id: string
+          reason: string
+          request_type: string
+          requested_amount: number | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          student_id: string
+          title: string
+          updated_at: string
+          urgency_level: string | null
+        }
+        Insert: {
+          approved_amount?: number | null
+          created_at?: string
+          description: string
+          financial_situation?: string | null
+          id?: string
+          reason: string
+          request_type?: string
+          requested_amount?: number | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          student_id: string
+          title: string
+          updated_at?: string
+          urgency_level?: string | null
+        }
+        Update: {
+          approved_amount?: number | null
+          created_at?: string
+          description?: string
+          financial_situation?: string | null
+          id?: string
+          reason?: string
+          request_type?: string
+          requested_amount?: number | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          student_id?: string
+          title?: string
+          updated_at?: string
+          urgency_level?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "faculty"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_requests_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

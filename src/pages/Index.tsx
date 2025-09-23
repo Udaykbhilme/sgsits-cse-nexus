@@ -20,25 +20,25 @@ const Index = () => {
       <main>
         <HeroSection />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <AnnouncementBanner />
+          
           {isAdmin && (
-            <div className="mb-6 flex justify-end">
+            <div className="mt-6 flex justify-end">
               <Button
                 onClick={() => setShowAnnouncementManager(!showAnnouncementManager)}
                 className="bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Manage Announcements
+                {showAnnouncementManager ? 'Hide' : 'Manage'} Announcements
               </Button>
             </div>
           )}
           
           {isAdmin && showAnnouncementManager && (
-            <div className="mb-8 p-6 bg-gradient-to-br from-gray-900/50 to-black/50 border-2 border-yellow-500/20 rounded-xl">
+            <div className="mt-6 p-6 bg-gradient-to-br from-gray-900/50 to-black/50 border-2 border-yellow-500/20 rounded-xl">
               <AdminAnnouncementManager onAnnouncementUpdate={() => window.location.reload()} />
             </div>
           )}
-          
-          <AnnouncementBanner />
         </div>
         <WhyJoinSection />
         <FeaturedAlumni />

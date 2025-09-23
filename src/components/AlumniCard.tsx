@@ -5,7 +5,7 @@ import { Linkedin, ExternalLink, MapPin, Calendar } from "lucide-react";
 
 interface AlumniCardProps {
   name: string;
-  image: string;
+  image?: string;
   achievement: string;
   batchYear: string;
   currentRole: string;
@@ -33,11 +33,19 @@ const AlumniCard = ({
       <CardContent className="p-0">
         {/* Image Section */}
         <div className="relative overflow-hidden">
-          <img
-            src={image}
-            alt={name}
-            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
-          />
+          {image ? (
+            <img
+              src={image}
+              alt={name}
+              className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+          ) : (
+            <div className="w-full h-48 bg-gradient-to-br from-yellow-500/20 to-amber-500/20 flex items-center justify-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-500 rounded-full flex items-center justify-center text-black font-bold text-xl">
+                {name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+              </div>
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           
           {/* Hover Actions */}

@@ -184,7 +184,7 @@ export default function Auth() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            SGSITS CE Alumni
+            SGSITS CSE
           </CardTitle>
           <CardDescription>
             Connect with your fellow Computer Engineering alumni
@@ -373,7 +373,7 @@ export default function Auth() {
                       id="admin-email"
                       name="email"
                       type="email"
-                      placeholder="admin1952@sgsits.com"
+                      placeholder="Email"
                       value={formData.email}
                       onChange={handleInputChange}
                       required

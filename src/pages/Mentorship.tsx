@@ -18,11 +18,18 @@ import {
   Filter,
   Calendar,
   Video,
-  MessageCircle
+  MessageCircle,
+  HandHeart,
+  Laptop
 } from "lucide-react";
+import SupportRequestDialog from "@/components/SupportRequestDialog";
+import { useSupportRequests } from "@/hooks/useSupportRequests";
+import { useState, useEffect } from "react";
 
 const Mentorship = () => {
   const { user } = useAuth();
+  const { supportRequests } = useSupportRequests();
+  const [userSupportRequests, setUserSupportRequests] = useState([]);
   const mentorshipCategories = [
     { name: "Career Guidance", count: 45, icon: Briefcase },
     { name: "Technical Skills", count: 32, icon: GraduationCap },
@@ -229,6 +236,116 @@ const Mentorship = () => {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Support Needs Section */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-foreground mb-4">
+                <HandHeart className="w-8 h-8 mx-auto mb-4 text-primary" />
+                Student Support Program
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                Need financial assistance for educational equipment? Our faculty and alumni community 
+                is here to help students who need support with laptops, books, and other essentials.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Request Support */}
+              <Card className="card-gradient">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Laptop className="w-5 h-5" />
+                    Request Support
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-muted-foreground">
+                    Submit a request for financial assistance with educational equipment. 
+                    Our faculty will review your application and help connect you with resources.
+                  </p>
+                  
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                    <h4 className="font-semibold text-primary mb-2">What we can help with:</h4>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• Laptops and computers for studies</li>
+                      <li>• Technical books and learning materials</li>
+                      <li>• Software licenses and subscriptions</li>
+                      <li>• Internet connectivity support</li>
+                      <li>• Other educational equipment</li>
+                    </ul>
+                  </div>
+
+                  {user ? (
+                    <SupportRequestDialog
+                      studentId="dummy-student-id" // This would be dynamically set based on user
+                      trigger={
+                        <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white">
+                          <HandHeart className="w-4 h-4 mr-2" />
+                          Submit Support Request
+                        </Button>
+                      }
+                    />
+                  ) : (
+                    <Button 
+                      className="w-full" 
+                      onClick={() => window.location.href = '/auth'}
+                    >
+                      Sign In to Request Support
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Track Requests */}
+              <Card className="card-gradient">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="w-5 h-5" />
+                    Your Support Requests
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {user ? (
+                    <div className="space-y-4">
+                      {userSupportRequests.length > 0 ? (
+                        userSupportRequests.map((request: any, index) => (
+                          <div key={index} className="border border-border rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-medium">{request.title}</h4>
+                              <Badge variant={request.status === 'approved' ? 'default' : 'secondary'}>
+                                {request.status}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-2">
+                              {request.description}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Submitted: {new Date(request.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-8">
+                          <HandHeart className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+                          <p className="text-muted-foreground">No support requests yet</p>
+                          <p className="text-sm text-muted-foreground mt-2">
+                            Submit a request above to get started
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">Sign in to view your support requests</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>

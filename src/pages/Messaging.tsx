@@ -86,10 +86,11 @@ const Messaging = () => {
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isVerified && userRole !== 'admin' && userRole !== 'faculty') {
+    // Check if user is authenticated
+    if (!userRole) {
       toast({
-        title: "Verification Required",
-        description: "You need to be verified to send messages.",
+        title: "Authentication Required",
+        description: "You need to be logged in to send messages.",
         variant: "destructive",
       });
       return;
@@ -137,7 +138,7 @@ const Messaging = () => {
     });
   };
 
-  const canSendMessages = isVerified || userRole === 'admin' || userRole === 'faculty';
+  const canSendMessages = userRole && userRole !== 'guest';
   const canSendBatchMessages = userRole === 'faculty' || userRole === 'admin';
 
   if (!canSendMessages) {
@@ -148,16 +149,16 @@ const Messaging = () => {
             <CardContent className="pt-6 text-center">
               <MessageCircle className="w-16 h-16 mx-auto mb-4 text-yellow-400" />
               <h2 className="text-2xl font-bold text-yellow-100 mb-4">
-                Verification Required
+                Authentication Required
               </h2>
               <p className="text-yellow-200/70 mb-6">
-                You need to be verified to access the messaging system. Please complete your verification first.
+                You need to be logged in to access the messaging system. Please sign in first.
               </p>
               <Button 
-                onClick={() => window.location.href = '/verification'}
+                onClick={() => window.location.href = '/auth'}
                 className="bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold"
               >
-                Go to Verification
+                Sign In
               </Button>
             </CardContent>
           </Card>
