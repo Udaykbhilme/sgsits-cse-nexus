@@ -3,24 +3,28 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Users, Briefcase, Heart, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-bg.jpg";
-
 const HeroSection = () => {
-  const stats = [
-    { label: "Active Alumni", value: "2,500+", icon: Users },
-    { label: "Job Postings", value: "150+", icon: Briefcase },
-    { label: "Mentorship Sessions", value: "300+", icon: Star },
-    { label: "Donations Raised", value: "₹50L+", icon: Heart },
-  ];
-
-  return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+  const stats = [{
+    label: "Active Alumni",
+    value: "2,500+",
+    icon: Users
+  }, {
+    label: "Job Postings",
+    value: "150+",
+    icon: Briefcase
+  }, {
+    label: "Mentorship Sessions",
+    value: "300+",
+    icon: Star
+  }, {
+    label: "Donations Raised",
+    value: "₹50L+",
+    icon: Heart
+  }];
+  return <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={heroImage}
-          alt="SGSITS Campus"
-          className="w-full h-full object-cover"
-        />
+        <img src={heroImage} alt="SGSITS Campus" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/20" />
       </div>
 
@@ -72,32 +76,24 @@ const HeroSection = () => {
         {/* Registration Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up">
           <Button size="lg" asChild variant="outline" className="text-lg px-8 py-4 bg-black/20 hover:bg-black/40 text-yellow-200 border-2 border-yellow-500/30 font-bold shadow-lg hover:shadow-xl transition-all duration-300">
-            <Link to="/auth?type=signup&role=alumni">
-              Register as Alumni
-            </Link>
+            
           </Button>
           <Button size="lg" asChild variant="outline" className="text-lg px-8 py-4 bg-black/20 hover:bg-black/40 text-yellow-200 border-2 border-yellow-500/30 font-bold shadow-lg hover:shadow-xl transition-all duration-300">
-            <Link to="/auth?type=signup&role=student">
-              Student Registration
-            </Link>
+            
           </Button>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 animate-scale-in">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="bg-black/30 backdrop-blur-sm border-2 border-yellow-500/30 p-4 sm:p-6 rounded-2xl text-center hover:scale-105 transition-all duration-300 hover:border-yellow-400/50 hover:bg-black/40"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
+          {stats.map((stat, index) => <div key={index} className="bg-black/30 backdrop-blur-sm border-2 border-yellow-500/30 p-4 sm:p-6 rounded-2xl text-center hover:scale-105 transition-all duration-300 hover:border-yellow-400/50 hover:bg-black/40" style={{
+          animationDelay: `${index * 0.1}s`
+        }}>
               <stat.icon className="w-8 h-8 mx-auto mb-3 text-yellow-400" />
               <div className="text-2xl sm:text-3xl font-bold text-yellow-300 mb-1">
                 {stat.value}
               </div>
               <div className="text-sm text-yellow-200/75">{stat.label}</div>
-            </div>
-          ))}
+            </div>)}
         </div>
       </div>
 
@@ -107,8 +103,6 @@ const HeroSection = () => {
           <div className="w-1.5 h-3 bg-yellow-400 rounded-full mx-auto mt-2 animate-pulse" />
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
