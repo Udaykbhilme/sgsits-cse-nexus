@@ -55,7 +55,7 @@ const HeroSection = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 animate-slide-up">
           <Button size="lg" asChild className="text-lg px-8 py-4 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold border-2 border-yellow-400 shadow-lg hover:shadow-xl transition-all duration-300">
             <Link to="/auth">
               Join the Network
@@ -65,6 +65,20 @@ const HeroSection = () => {
           <Button size="lg" asChild className="text-lg px-8 py-4 bg-black/30 hover:bg-black/50 text-yellow-300 border-2 border-yellow-500/50 font-bold shadow-lg hover:shadow-xl transition-all duration-300">
             <Link to="/alumni">
               Explore Alumni Directory
+            </Link>
+          </Button>
+        </div>
+
+        {/* Registration Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up">
+          <Button size="lg" asChild variant="outline" className="text-lg px-8 py-4 bg-black/20 hover:bg-black/40 text-yellow-200 border-2 border-yellow-500/30 font-bold shadow-lg hover:shadow-xl transition-all duration-300">
+            <Link to="/auth?type=signup&role=alumni">
+              Register as Alumni
+            </Link>
+          </Button>
+          <Button size="lg" asChild variant="outline" className="text-lg px-8 py-4 bg-black/20 hover:bg-black/40 text-yellow-200 border-2 border-yellow-500/30 font-bold shadow-lg hover:shadow-xl transition-all duration-300">
+            <Link to="/auth?type=signup&role=student">
+              Student Registration
             </Link>
           </Button>
         </div>

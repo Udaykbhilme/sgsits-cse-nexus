@@ -23,7 +23,8 @@ export default function Auth() {
     confirmPassword: '',
     role: '',
     batchYear: '',
-    studentId: ''
+    studentId: '',
+    employeeId: ''
   });
 
   const redirectTo = searchParams.get('redirectTo') || '/';
@@ -272,7 +273,7 @@ export default function Auth() {
                           Alumni
                         </div>
                       </SelectItem>
-                      <SelectItem value="faculty">
+                       <SelectItem value="faculty">
                         <div className="flex items-center gap-2">
                           <UserCheck className="w-4 h-4" />
                           Faculty
@@ -307,6 +308,20 @@ export default function Auth() {
                       />
                     </div>
                   </>
+                )}
+                {formData.role === 'faculty' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-employee-id">Employee ID</Label>
+                    <Input
+                      id="signup-employee-id"
+                      name="employeeId"
+                      type="text"
+                      placeholder="Your employee ID"
+                      value={formData.employeeId || ''}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
                 )}
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>

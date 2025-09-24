@@ -9,31 +9,26 @@ import {
   Users, 
   Heart, 
   MessageSquare, 
-  ShieldCheck, 
   Info,
   LogOut,
   User,
-  Crown,
+  GraduationCap,
   DollarSign,
   Handshake
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
-import { useUserRole } from "@/hooks/useUserRole";
 
-const AdminNavigation = () => {
+const FacultyNavigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { profile } = useProfile();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { role } = useUserRole();
-  
   const navigationItems = [
     { name: "Everyone", href: "/alumni", icon: Users },
     { name: "Mentorship", href: "/mentorship", icon: Handshake },
-    ...(role === 'admin' ? [{ name: "Verification", href: "/admin/verification", icon: ShieldCheck }] : []),
     { name: "Messaging", href: "/messaging", icon: MessageSquare },
     { name: "Endowment", href: "/endowment", icon: DollarSign },
     { name: "About", href: "/about", icon: Info },
@@ -55,11 +50,11 @@ const AdminNavigation = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center">
-              <Crown className="w-6 h-6 text-black" />
+              <GraduationCap className="w-6 h-6 text-black" />
             </div>
             <div className="text-yellow-100">
-              <div className="text-xl font-bold">Admin Panel</div>
-              <div className="text-xs text-yellow-300">God Mode Active</div>
+              <div className="text-xl font-bold">Faculty Panel</div>
+              <div className="text-xs text-yellow-300">Academic Excellence</div>
             </div>
           </Link>
 
@@ -95,7 +90,7 @@ const AdminNavigation = () => {
                     <Avatar className="h-8 w-8 border-2 border-yellow-500/30">
                       <AvatarImage src={profile?.avatar_url || undefined} />
                       <AvatarFallback className="bg-yellow-500 text-black">
-                        {getInitials(profile?.full_name || user?.email || 'A')}
+                        {getInitials(profile?.full_name || user?.email || 'F')}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -177,4 +172,4 @@ const AdminNavigation = () => {
   );
 };
 
-export default AdminNavigation;
+export default FacultyNavigation;

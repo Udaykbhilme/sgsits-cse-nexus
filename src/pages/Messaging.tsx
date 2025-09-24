@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Users, MessageCircle, Mail, Clock, User } from 'lucide-react';
+import { Send, Users, MessageCircle, Mail, Clock, User, Search } from 'lucide-react';
+import PersonSearchDialog from '@/components/PersonSearchDialog';
 
 interface Message {
   id: string;
@@ -34,6 +35,7 @@ const Messaging = () => {
   const [isComposing, setIsComposing] = useState(false);
   const [userRole, setUserRole] = useState<string>('student');
   const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [showPersonSearch, setShowPersonSearch] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -264,12 +266,22 @@ const Messaging = () => {
                     {newMessage.type === 'individual' ? (
                       <div className="space-y-2">
                         <Label className="text-yellow-200">To</Label>
-                        <Input
-                          placeholder="Enter recipient email or name"
-                          value={newMessage.receiver}
-                          onChange={(e) => setNewMessage(prev => ({ ...prev, receiver: e.target.value }))}
-                          className="bg-black/30 border-yellow-500/30 text-yellow-100 placeholder:text-yellow-200/50"
-                        />
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Enter recipient email or name"
+                            value={newMessage.receiver}
+                            onChange={(e) => setNewMessage(prev => ({ ...prev, receiver: e.target.value }))}
+                            className="flex-1 bg-black/30 border-yellow-500/30 text-yellow-100 placeholder:text-yellow-200/50"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setShowPersonSearch(true)}
+                            className="bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 border-yellow-500/30"
+                          >
+                            <Search className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     ) : (
                       <div className="space-y-2">
@@ -383,6 +395,14 @@ const Messaging = () => {
             )}
           </div>
         </div>
+
+        <PersonSearchDialog
+          open={showPersonSearch}
+          onOpenChange={setShowPersonSearch}
+          onPersonSelect={(person) => {
+            setNewMessage(prev => ({ ...prev, receiver: person.full_name || person.email }));
+          }}
+        />
       </div>
     </div>
   );

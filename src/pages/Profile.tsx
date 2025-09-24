@@ -32,13 +32,16 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile, Profile as ProfileType } from "@/hooks/useProfile";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useUserRoleManager } from "@/hooks/useUserRoleManager";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
+import UserTypeDisplay from "@/components/UserTypeDisplay";
 
 const Profile = () => {
   const { user, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading, updateProfile, uploadAvatar } = useProfile();
   const { isAdmin } = useUserRole();
+  const { userType } = useUserRoleManager();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -252,13 +255,7 @@ const Profile = () => {
                     ) : (
                       <div className="text-center">
                         <h2 className="text-2xl font-bold text-foreground">{formData.full_name || 'User'}</h2>
-                        {isAdmin && (
-                          <div className="flex items-center justify-center gap-2 mt-2">
-                            <Crown className="w-5 h-5 text-yellow-500" />
-                            <span className="text-lg font-bold text-yellow-500">The God</span>
-                            <Crown className="w-5 h-5 text-yellow-500" />
-                          </div>
-                        )}
+                        <UserTypeDisplay />
                       </div>
                     )}
 
@@ -482,72 +479,74 @@ const Profile = () => {
               </Card>
 
               {/* Professional Details */}
-              <Card className="card-gradient">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Briefcase className="w-5 h-5" />
-                    Professional Details
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">Years of Experience</Label>
-                      {isEditing ? (
-                        <Select value={formData.years_of_experience.toString()} onValueChange={(value) => handleInputChange('years_of_experience', parseInt(value))}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Array.from({ length: 21 }, (_, i) => i).map(years => (
-                              <SelectItem key={years} value={years.toString()}>
-                                {years === 0 ? 'Fresher' : `${years} year${years > 1 ? 's' : ''}`}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <p className="text-muted-foreground">
-                          {formData.years_of_experience === 0 ? 'Fresher' : `${formData.years_of_experience} year${formData.years_of_experience > 1 ? 's' : ''}`}
-                        </p>
-                      )}
+              {userType !== 'faculty' && (
+                <Card className="card-gradient">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Briefcase className="w-5 h-5" />
+                      Professional Details
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-sm font-medium mb-2 block">Years of Experience</Label>
+                        {isEditing ? (
+                          <Select value={formData.years_of_experience.toString()} onValueChange={(value) => handleInputChange('years_of_experience', parseInt(value))}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Array.from({ length: 21 }, (_, i) => i).map(years => (
+                                <SelectItem key={years} value={years.toString()}>
+                                  {years === 0 ? 'Fresher' : `${years} year${years > 1 ? 's' : ''}`}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <p className="text-muted-foreground">
+                            {formData.years_of_experience === 0 ? 'Fresher' : `${formData.years_of_experience} year${formData.years_of_experience > 1 ? 's' : ''}`}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Mentorship Preferences */}
-                  <div className="space-y-4 pt-4 border-t">
-                    <h4 className="font-medium">Mentorship Preferences</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-sm font-medium">Available as Mentor</Label>
-                          <p className="text-xs text-muted-foreground">Help guide junior alumni</p>
+                    {/* Mentorship Preferences */}
+                    <div className="space-y-4 pt-4 border-t">
+                      <h4 className="font-medium">Mentorship Preferences</h4>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label className="text-sm font-medium">Available as Mentor</Label>
+                            <p className="text-xs text-muted-foreground">Help guide junior alumni</p>
+                          </div>
+                          <Switch
+                            checked={formData.is_mentor}
+                            onCheckedChange={(checked) => handleInputChange('is_mentor', checked)}
+                            disabled={!isEditing}
+                          />
                         </div>
-                        <Switch
-                          checked={formData.is_mentor}
-                          onCheckedChange={(checked) => handleInputChange('is_mentor', checked)}
-                          disabled={!isEditing}
-                        />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-sm font-medium">Looking for Mentor</Label>
-                          <p className="text-xs text-muted-foreground">Seeking guidance from experienced alumni</p>
+                        
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label className="text-sm font-medium">Looking for Mentor</Label>
+                            <p className="text-xs text-muted-foreground">Seeking guidance from experienced alumni</p>
+                          </div>
+                          <Switch
+                            checked={formData.is_looking_for_mentor}
+                            onCheckedChange={(checked) => handleInputChange('is_looking_for_mentor', checked)}
+                            disabled={!isEditing}
+                          />
                         </div>
-                        <Switch
-                          checked={formData.is_looking_for_mentor}
-                          onCheckedChange={(checked) => handleInputChange('is_looking_for_mentor', checked)}
-                          disabled={!isEditing}
-                        />
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Verification Section */}
-              {!isAdmin && (
+              {!isAdmin && userType !== 'faculty' && (
                 <Card className="card-gradient">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
